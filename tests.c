@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-#include "mptcp.h"
+#include "mptcplib.h"
 #include "tests_helpers.h"
 
 // Configurable variables
@@ -97,7 +97,7 @@ void test_mptcplib_open_sub(int sockfd, struct simpleaddr local[6], struct simpl
     for (flow = 1; flow < 6; flow++) {
         // For the flow 1..5 (those allocated with mptcplib)
 
-        struct syscall_res_subtuple opened_flow
+        struct mptcplib_flow opened_flow
                 = mptcplib_open_sub(sockfd,
                                     local[flow].addr, local[flow].addrlen,
                                     distant[flow].addr, distant[flow].addrlen,
@@ -146,7 +146,7 @@ void test_mptcplib_open_sub(int sockfd, struct simpleaddr local[6], struct simpl
 
 void test_mptcplib_get_sub_ids(int sockfd, struct simpleaddr local[6], struct simpleaddr distant[6]) {
 
-    struct syscall_res_subids output_ids = mptcplib_get_sub_ids(sockfd);
+    struct mptcplib_getsubids_result output_ids = mptcplib_get_sub_ids(sockfd);
     test(output_ids.errnoValue == 0, "mptcplib_get_sub_ids errno");
     test(output_ids.ids->sub_count == 5, "mptcplib_get_sub_ids sub_count");
 
@@ -177,7 +177,7 @@ void test_mptcplib_get_sub_tuple(int sockfd, struct simpleaddr local[6], struct 
         // for subflows 0..4
 
         // get the subflow tuple
-        struct syscall_res_subtuple output_tuple = mptcplib_get_sub_tuple(sockfd, FLOW_IDS[flow]);
+        struct mptcplib_flow output_tuple = mptcplib_get_sub_tuple(sockfd, FLOW_IDS[flow]);
 
         // check the errno result
         sprintf(buf, "tuple.errnoValue correctness for flow #%d", flow);
@@ -234,7 +234,7 @@ void test_mptcplib_close_sub(int sockfd, struct simpleaddr local[6], struct simp
     test(mptcplib_close_sub(sockfd, 100, 0), "trying to close invalid subflow");
 
     // finally, checks the last remaining subflow
-    struct syscall_res_subids output_ids_afterclose = mptcplib_get_sub_ids(sockfd);
+    struct mptcplib_getsubids_result output_ids_afterclose = mptcplib_get_sub_ids(sockfd);
     test(output_ids_afterclose.ids->sub_count == 1, "counting flow remaining");
     int remaining_id = output_ids_afterclose.ids->sub_status[0].id;
     test(remaining_id == FLOW_IDS[4], "last flow ID");
@@ -251,7 +251,7 @@ void test_mptcplib_sockopt(int sockfd, struct simpleaddr local[6], struct simple
     test(set_res == 0, "setsockopt success status");
 
     // get IP_TOS
-    struct syscall_res_sockopt get_res = mptcplib_get_sub_sockopt(sockfd, remaining_id, SOL_IP, IP_TOS, sizeof(int));
+    struct mptcplib_sockopt_result get_res = mptcplib_get_sub_sockopt(sockfd, remaining_id, SOL_IP, IP_TOS, sizeof(int));
 
     // check that it's equal to 28 (and also check data consistency)
     test(get_res.errnoValue == 0, "getsockopt success status");
