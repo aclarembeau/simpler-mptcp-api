@@ -14,7 +14,7 @@ Thus, even if the project has been thorously tested (mainly unit tests and memor
 To use the library, you just have to copy the files "mptcplib.c" and "mptcplib.h" in your project or, you can also create a shared library. 
 After that, if you have a machine with multipath-tcp enabled and the native socket API (such as you can get with this vagrant box https://github.com/hoang-tranviet/mptcp-vagrant), you would be able to use the following functions: 
 
-```
+```c
 // Open a new subflow
 int mptcplib_open_sub(int sockfd, struct mptcplib_flow *tuple);
 
@@ -36,7 +36,7 @@ struct mptcplib_getsubsockopt_result mptcplib_get_sub_sockopt(int sockfd, int id
 
 Those functions works thanks to different structures that can carry information to the library: 
 
-```
+```c
 struct mptcplib_flow {
     int id;                             // Subflow id
     int low_prio;                       // Subflow priority
@@ -73,14 +73,14 @@ The two first structures are used to represent respectively a TCP flow and an in
 
 And, as the manipulation of network structures such as sockaddr and memory management can be sometimes quite complicated, the library also expose one function to create a flow from source and destination host names: 
 
-```
+```c
 // Creates a flow with given host and port and default priority
 struct mptcplib_flow mptcplib_make_flow(char *source_host, unsigned short source_port, char *dest_host, unsigned short dest_port);
 ```
 
 And to manage memory: 
 
-```
+```c
 void mptcplib_free_intarray(struct mptcplib_intarray arr);
 void mptcplib_free_flow(struct mptcplib_flow tuple);
 void mptcplib_free_getsubtockopt_result(struct mptcplib_getsubsockopt_result sockopt);
@@ -90,7 +90,7 @@ void mptcplib_free_getsubtockopt_result(struct mptcplib_getsubsockopt_result soc
 
 Beside from the tests.c file, which contains a procedure to ensure the quality of the code, you can find an exemple of utilisation of the library below: 
 
-```
+```c
 // establish a connection
 int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
