@@ -97,7 +97,7 @@ int main(int argc, char **argv){
     puts("listing subflows");
     struct mptcplib_getsubids_result subidsres = mptcplib_get_sub_ids(sockfd);
     test("listing subflows success", subidsres.errnoValue == 0 , "success", "failure");
-    test("counting subflows", subidsres.ids->sub_count == 4, "== 4", "!= 4");
+    test("counting subflows", subidsres.ids.count == 4, "== 4", "!= 4");
 
     puts("showing content of the subflows");
     int i;
