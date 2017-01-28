@@ -1,2 +1,2 @@
 tests:
-	gcc *.c -lcunit
+	gcc mptcplib.c tests.c

@@ -72,8 +72,8 @@ struct mptcplib_getsubsockopt_result mptcplib_get_sub_sockopt(int sockfd, int id
 /*
  * Memory freeing functions
  */
-void mptcplib_free_res_subids(struct mptcplib_getsubids_result ids);
-void mptcplib_free_res_subtuple(struct mptcplib_flow tuple);
-void mptcplib_free_res_sockopt(struct mptcplib_sockopt_result sockopt);
+void mptcplib_free_getsubids_result(struct mptcplib_getsubids_result ids);
+void mptcplib_free_flow(struct mptcplib_flow tuple);
+void mptcplib_free_getsubtockopt_result(struct mptcplib_getsubsockopt_result sockopt);
 
 #endif
