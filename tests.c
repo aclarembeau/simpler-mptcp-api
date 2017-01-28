@@ -101,8 +101,8 @@ int main(int argc, char **argv){
 
     puts("showing content of the subflows");
     int i;
-    for(i = 0 ; i < subidsres.ids->sub_count; i++){
-        struct mptcplib_getsubtuple_result tupleRes = mptcplib_get_sub_tuple(sockfd, subidsres.ids->sub_status[i].id);
+    for(i = 0 ; i < subidsres.ids.count; i++){
+        struct mptcplib_getsubtuple_result tupleRes = mptcplib_get_sub_tuple(sockfd, subidsres.ids.values[i]);
         test("test inspection succeeded", tupleRes.errnoValue == 0, "success", "failure");
         test("tuple id >= 0", tupleRes.flow.id >= 0, ">= 0", "< 0");
         test("tuple prio == 1", tupleRes.flow.low_prio == 1, "==1", "!=1");
@@ -116,8 +116,8 @@ int main(int argc, char **argv){
 
     puts("removing some subflows");
 
-    int closedId1 = subidsres.ids->sub_status[0].id;
-    int closedId2 = subidsres.ids->sub_status[1].id;
+    int closedId1 = subidsres.ids.values[0];
+    int closedId2 = subidsres.ids.values[1];
     int errClose1 = mptcplib_close_sub(sockfd, closedId1, 0);
     test("close test valid", errClose1 == 0, "success", "failure");
     int errClose2 = mptcplib_close_sub(sockfd, closedId2, 0);
@@ -132,8 +132,8 @@ int main(int argc, char **argv){
     struct mptcplib_getsubids_result subidsres2 = mptcplib_get_sub_ids(sockfd);
     test("listing subflow status", subidsres2.errnoValue == 0, "succeeded", "failed");
 
-    for(i = 0 ; i< subidsres2.ids->sub_count; i++){
-        int id = subidsres2.ids->sub_status[i].id;
+    for(i = 0 ; i< subidsres2.ids.count; i++){
+        int id = subidsres2.ids.values[i];
         test("removed ID doesn't belong to result", id != closedId1 && id != closedId2, "success", "failure");
     }
 
@@ -141,7 +141,7 @@ int main(int argc, char **argv){
     // finally, setting and reading a socket option from a subflow
 
     puts("testing socket options");
-    int setId = subidsres2.ids->sub_status[0].id;
+    int setId = subidsres2.ids.values[0];
 
     int val = 28;
     int resSet = mptcplib_set_sub_sockopt(sockfd,setId, SOL_IP, IP_TOS, &val, sizeof(val));
@@ -153,7 +153,7 @@ int main(int argc, char **argv){
 
     // closing the test suite
     mptcplib_free_getsubtockopt_result(getRes);
-    mptcplib_free_getsubids_result(subidsres);
-    mptcplib_free_getsubids_result(subidsres2);
+    mptcplib_free_intarray(subidsres.ids);
+    mptcplib_free_intarray(subidsres2.ids);
     shutdown(sockfd, 0);
 }

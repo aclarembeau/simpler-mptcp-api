@@ -111,7 +111,16 @@ struct mptcplib_getsubids_result mptcplib_get_sub_ids(int sockfd) {
 
     // format the output
     if (r == 0) {
-        struct mptcplib_getsubids_result ret = {0, ids};
+        // making the int array
+        struct mptcp_intarray arr = {ids->sub_count, malloc(sizeof(int) * ids->sub_count)};
+        int i;
+        for(i = 0 ; i < arr.count ; i++){
+            arr.values[i] = ids->sub_status[i].id;
+        }
+
+        // building the result
+        struct mptcplib_getsubids_result ret = {0, arr};
+        free(ids);
         return ret;
     } else {
         free(ids);
@@ -242,8 +251,8 @@ struct mptcplib_getsubsockopt_result mptcplib_get_sub_sockopt(int sockfd, int id
 /*
  * Memory freeing functions
  */
-void mptcplib_free_getsubids_result(struct mptcplib_getsubids_result ids) {
-    free(ids.ids);
+void mptcplib_free_intarray(struct mptcplib_intarray arr){
+    free(arr.values);
 }
 
 void mptcplib_free_flow(struct mptcplib_flow tuple) {
